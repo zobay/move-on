@@ -35,4 +35,22 @@ class ProductController extends Controller
 
         return response()->json($product, 201);
     }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'price' => 'nullable|numeric',
+            'description' => 'nullable|string',
+        ]);
+
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        $product->update($validatedData);
+
+        return response()->json(['message' => 'Product updated successfully', 'product' => $product], 200);
+    }
 }
